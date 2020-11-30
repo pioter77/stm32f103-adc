@@ -13,9 +13,11 @@ int main(void)
 	volatile double humi_perc0=0;
 	volatile uint16_t humi_val1=0;
 	volatile double humi_perc1=0;
-	RCC->APB2ENR =RCC_APB2ENR_IOPBEN | RCC_APB2ENR_ADC1EN;
+	volatile double humi_perc2=0;
+	RCC->APB2ENR =RCC_APB2ENR_IOPBEN | RCC_APB2ENR_ADC1EN | RCC_APB2ENR_IOPAEN;
 	init_GP(PB,0,IN,I_AN);
 	init_GP(PB,1,IN,I_AN);
+	init_GP(PA,1,IN,I_AN);	//thermostor can be plugged for now with photoresisitr
 	ADC1->CR2=ADC_CR2_ADON;		//wybudz adc ze sleepa zwieksza to zuzycie pradu
 	for(volatile uint32_t delay=100000;delay;delay--);	//czas na odpalanie adc, wymagany zgodnie z datasheetem ok 1us powinie miec
 	
@@ -41,6 +43,7 @@ int main(void)
 		;	//czekaj dopuki nie zapisze flagi ze odczyt sokjoczony
 	  humi_val1=(uint16_t)(ADC1->DR);*/
 	humi_perc1=(single_readout_ADC1_regu(9)/4096.0)*100.0;	//adc is only 12 bit not 16! 
+	humi_perc2=(single_readout_ADC1_regu(1)/4096.0)*100.0;	//adc is only 12 bit not 16! //pa1 thermistor
 	flag=!flag;
 	}
 	
